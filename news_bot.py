@@ -17,7 +17,8 @@ def get_news():
     url = 'https://www.philstar.com/'
     res = requests.get(url)
     soup = BeautifulSoup(res.text, 'html.parser')
-    articles = soup.select('.listing li .title a')[:5]
+    # 使用該網站的首頁結構選取主要新聞
+    articles = soup.select('.headline-title > a')[:5]
 
     news_list = []
     for art in articles:
@@ -33,8 +34,9 @@ def get_article_content(link):
     try:
         res = requests.get(link)
         soup = BeautifulSoup(res.text, 'html.parser')
-        # 根據實際文章的HTML結構選擇適當的標籤
-        content = soup.select_one('.article-content-class-name').text.strip()
+        # 選取文章內容的主要段落
+        paragraphs = soup.select('.story-block p')
+        content = '\n'.join([p.text.strip() for p in paragraphs[:3]])  # 僅取前三段
         return content
     except Exception as e:
         print(f"抓取文章內容失敗：{e}")
