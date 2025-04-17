@@ -14,7 +14,7 @@ translator = Translator()
 
 # 設定要抓取的新聞網站
 def get_news():
-    url = 'https://www.philstar.com/headlines'
+    url = 'https://www.philstar.com/'
     res = requests.get(url)
     soup = BeautifulSoup(res.text, 'html.parser')
     articles = soup.select('.listing li .title a')[:5]
