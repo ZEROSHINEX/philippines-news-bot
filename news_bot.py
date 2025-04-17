@@ -28,7 +28,19 @@ def get_news():
         news_list.append((title, link))
     return news_list
 
-# 翻譯標題
+# 抓取文章內文
+def get_article_content(link):
+    try:
+        res = requests.get(link)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        # 根據實際文章的HTML結構選擇適當的標籤
+        content = soup.select_one('.article-content-class-name').text.strip()
+        return content
+    except Exception as e:
+        print(f"抓取文章內容失敗：{e}")
+        return "（內文抓取失敗，請點擊連結查看完整內容）"
+
+# 翻譯標題與內文
 def translate_to_chinese(text):
     try:
         translated = translator.translate(text, dest='zh-tw')
@@ -43,8 +55,14 @@ def send_news():
     news = get_news()
 
     for title, url in news:
+        # 翻譯標題
         zh_title = translate_to_chinese(title)
-        message += f"🔹 [{zh_title}]({url})\n"
+        # 抓取內文
+        content = get_article_content(url)
+        # 翻譯內文
+        zh_content = translate_to_chinese(content)
+        # 合併消息
+        message += f"🔹 [{zh_title}]({url})\n{zh_content}\n\n"
 
     bot.send_message(chat_id=CHAT_ID, text=message, parse_mode='Markdown')
 
