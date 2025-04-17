@@ -1,0 +1,7 @@
+services:
+  - type: cron
+    name: daily-news-bot
+    env: python
+    schedule: "0 0 * * *"  # UTC 時區 00:00，即台灣時間 08:00
+    buildCommand: ""
+    startCommand: "python news_bot.py"
